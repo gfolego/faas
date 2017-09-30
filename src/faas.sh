@@ -1,6 +1,22 @@
 #!/bin/bash
 
 
+# faas.sh
+# Copyright 2017 Guilherme Folego (gfolego@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 
 ###################
 ### Definitions ###
@@ -89,7 +105,11 @@ size=$(pdfinfo "$infile" | grep "^Page size:" | sed -e s,.*x\ ,, -e s,\ .*,,)
 [[ "$DEBUG" == "1" ]] && echo "Size: $size"
 
 # Calculate entries positions
-pos=($(pdftotext "$infile" -bbox /dev/stdout | grep ">-----</word>" -B1 | grep ">[0-9][0-9]</word>" | cut -f4,8 -d\" | sed s,\",+, | bc | xargs -i echo "$size"*0.5-{}*0.5 | bc ))
+pos=($(pdftotext "$infile" -bbox /dev/stdout |
+		grep ">-----</word>" -B1 |
+		grep ">[0-9][0-9]</word>" |
+		cut -f4,8 -d\" | sed s,\",+, | bc |
+		xargs -i echo "$size"*0.5-{}*0.5 | bc ))
 [[ "$DEBUG" == "1" ]] && printf "Pos: %s\n" "${pos[@]}"
 
 
@@ -115,7 +135,7 @@ done
 pdfunite "$tmpdir"/stamp-${#pos[@]}.pdf "$tmpdir"/back.pdf "$outfile"
 
 # Clean up
-rm -rf "$tmpdir"
+[[ "$DEBUG" != "1" ]] && rm -rf "$tmpdir"
 
 echo "Success generating $outfile"
 
