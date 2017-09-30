@@ -1,11 +1,6 @@
 #!/bin/bash
 
 
-# https://www.1001freedownloads.com/free-cliparts/?order=new&tag=handwritten
-# inkscape --without-gui --export-pdf=1.pdf 1.svg
-# pdfjam --scale 0.04 1.pdf
-
-
 
 ###################
 ### Definitions ###
@@ -47,7 +42,7 @@ if [[ ! -f "$infile" ]] ; then
 fi
 
 
-if [[ "$infile" != *.pdf ]] || [[ $(mimetype -b "$infile") != application/pdf ]] ; then
+if [[ "$infile" != *.pdf ]] || [[ $(file --mime-type -b "$infile") != application/pdf ]] ; then
     echo "File $infile is not a PDF."
     exit 1
 fi
