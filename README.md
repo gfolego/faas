@@ -18,5 +18,10 @@ sudo apt-get install file poppler-utils bc pdfjam pdftk
 bash src/faas.sh example/input.pdf example/output.pdf
 ```
 
+### Future work (contributions welcome)
+- Add personal signature
+- Add personal handwriting style for numbers
+- Add some stochastic variations
+
 ### Extra
 Images in `res` directory were taken from [https://www.1001freedownloads.com/free-cliparts/?order=new&tag=handwritten](https://www.1001freedownloads.com/free-cliparts/?order=new&tag=handwritten), and converted to PDF with `inkscape --without-gui --export-pdf=1.pdf 1.svg` (for each file).
