@@ -19,6 +19,7 @@ bash src/faas.sh example/input.pdf example/output.pdf
 ```
 
 ### Future work (contributions welcome)
+- Implement the actual "as a service"
 - Add personal signature
 - Add personal handwriting style for numbers
 - Add some stochastic variations
