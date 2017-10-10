@@ -20,8 +20,7 @@ bash src/faas.sh example/input.pdf example/output.pdf
 
 ### REST API Requirements
 ```bash
-sudo apt-get install python3 python3-pip
-sudo pip3 install -r requirements.txt
+sudo apt-get install python-flask
 ```
 
 ### Starting REST API 
