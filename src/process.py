@@ -20,12 +20,18 @@
 
 
 
+# Definitions
+START_STR='08:00'
+END_STR='17:00'
+
+
 import sys
 import argparse
 
 
 def parse_args(argv):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('infile', metavar='input.ps', type=argparse.FileType('r'),
                             help='input PostScript file')
@@ -33,23 +39,23 @@ def parse_args(argv):
                             help='output PostScript file')
     parser.add_argument('pos', metavar='position', type=float, nargs='+',
                             help='positions for time entries')
+    parser.add_argument('-s', '--start', type=str, default=START_STR,
+                            help='string to be used as start time')
+    parser.add_argument('-e', '--end', type=str, default=END_STR,
+                            help='string to be used as end time')
     parser.add_argument('-d', '--debug', action='store_true',
                             help='activate debug mode')
-    parser.add_argument('--start-string', help='string to be used as start time')
-    parser.add_argument('--end-string', help='string to be used as end time')
 
 
     args = parser.parse_args(args=argv)
     return args
 
 
-def process(infile, outfile, pos, startstr, endstr, debug=False):
-    content = infile.read()
+def process(infile, outfile, pos,
+        startstr=START_STR, endstr=END_STR,
+        debug=False):
 
-    if (startstr == None):
-        startstr = '08:00'
-    if (endstr == None):
-        endstr = '17:00'
+    content = infile.read()
 
     pos1 = content.find("COLABORADOR)Tj")
     pos2 = content.rfind("<</Length", 0, pos1);
@@ -103,7 +109,8 @@ def main(argv):
     args = parse_args(argv)
     if args.debug: print(args)
 
-    process(args.infile, args.outfile, args.pos, args.start_string, args.end_string, args.debug)
+    process(args.infile, args.outfile, args.pos,
+            args.start, args.end, args.debug)
 
 
 if __name__ == "__main__":
