@@ -8,28 +8,31 @@ Ideally, there will be a server where employees can submit their HR issued blank
 
 Please note that this is *saturday afternoon* quality code, *i.e.*, it is primarily intended to work, rather been being fast, flexible or extensible.
 
-### Requirements
+### Filling script (standalone)
+##### Requirements
 ```bash
 sudo apt-get install file poppler-utils bc ghostscript python
 ```
 
-### Using
+##### Using
 ```bash
 bash src/faas.sh example/input.pdf example/output.pdf
 ```
 
-### REST API Requirements
+### REST API
+##### Requirements
 ```bash
 sudo apt-get install python-flask
 ```
 
-### Starting REST API 
+##### Starting REST API 
 ```bash
 python web.py
 ```
 
-### Using REST API
+##### Using REST API
 ```bash
+sudo apt-get install curl
 curl -o 'output.pdf' -F 'file=@example/input.pdf' 'http://localhost:5000/v1/'
 ```
 
