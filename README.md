@@ -10,7 +10,7 @@ Please note that this is *saturday afternoon* quality code, *i.e.*, it is primar
 
 ### Requirements
 ```bash
-sudo apt-get install file poppler-utils bc pdfjam pdftk
+sudo apt-get install file poppler-utils bc ghostscript python
 ```
 
 ### Using
@@ -24,5 +24,6 @@ bash src/faas.sh example/input.pdf example/output.pdf
 - Add personal handwriting style for numbers
 - Add some stochastic variations
 
-### Extra
-Images in `res` directory were taken from [https://www.1001freedownloads.com/free-cliparts/?order=new&tag=handwritten](https://www.1001freedownloads.com/free-cliparts/?order=new&tag=handwritten), and converted to PDF with `inkscape --without-gui --export-pdf=1.pdf 1.svg` (for each file).
+### Contributors (in alphabetical order)
+- Bruno Ribeiro
+- Guilherme Folego (gfolego@gmail.com)
