@@ -1,7 +1,7 @@
 import optparse
 from faas import app
 
-default_host = '127.0.0.1'
+default_host = '0.0.0.0'
 default_port = '5000'
 parser = optparse.OptionParser()
 parser.add_option('-H', '--host',
