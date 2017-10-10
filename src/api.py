@@ -28,8 +28,7 @@ from subprocess import call
 
 
 UPLOAD_FOLDER = '/tmp'
-#ALLOWED_EXTENSIONS = set(['pdf'])
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['pdf'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -58,7 +57,10 @@ def upload_file():
             infile = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             outfile = os.path.join(app.config['UPLOAD_FOLDER'], 'faas.pdf')
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            call(['bash', 'src/faas.sh', infile, outfile])
+
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            call(['bash', dir_path + '/faas.sh', infile, outfile])
+
             return send_from_directory(app.config['UPLOAD_FOLDER'], 'faas.pdf')
 
     return '''
