@@ -65,8 +65,8 @@ def upload_file():
 
     return '''
     <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
+    <title>Folha as a Service (FaaS)</title>
+    <h1>Folha as a Service (FaaS)</h1>
     <form method=post enctype=multipart/form-data>
       <p><input type=file name=file>
          <input type=submit value=Upload>
