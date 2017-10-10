@@ -41,4 +41,5 @@ curl -o 'output.pdf' -F 'file=@example/input.pdf' 'http://localhost:5000/v1/'
 
 ### Contributors (in alphabetical order)
 - Bruno Ribeiro
+- Fabio Beranizo
 - Guilherme Folego (gfolego@gmail.com)
