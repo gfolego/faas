@@ -25,16 +25,6 @@
 # "1" for debug
 DEBUG="0"
 
-# Offset for pdfjam
-OFFSET8="-225"
-OFFSET1="-115"
-OFFSET7="-108"
-
-# Scale for pdfjam
-SCALE8="0.035"
-SCALE1="0.03"
-SCALE7="0.03"
-
 
 
 ##################
@@ -85,9 +75,9 @@ fi
 [[ "$DEBUG" == "1" ]] && echo "Temp dir: $tmpdir"
 
 
-# Resources directory
-resdir="$(dirname "$0")/../res"
-[[ "$DEBUG" == "1" ]] && echo "Res bir: $resdir"
+# Source directory
+srcdir="$(dirname "$0")/"
+[[ "$DEBUG" == "1" ]] && echo "Src bir: $srcdir"
 
 
 
@@ -109,30 +99,16 @@ pos=($(pdftotext "$infile" -bbox /dev/stdout |
 		grep ">-----</word>" -B1 |
 		grep ">[0-9][0-9]</word>" |
 		cut -f4,8 -d\" | sed s,\",+, | bc |
-		xargs -i echo "$size"*0.5-{}*0.5 | bc ))
+		xargs -i echo "$size"-{}*0.5 | bc ))
 [[ "$DEBUG" == "1" ]] && printf "Pos: %s\n" "${pos[@]}"
 
+# Process
+inputps="$tmpdir"/input.ps
+outputps="$tmpdir"/output.ps
 
-# Create a PDF for each entry
-for i in ${!pos[@]}; do
-    pdfjam --quiet --scale "$SCALE8" --offset "$OFFSET8 ${pos[i]}" "$resdir"/8.pdf --outfile "$tmpdir"/jam8-"$i".pdf
-    pdfjam --quiet --scale "$SCALE1" --offset "$OFFSET1 ${pos[i]}" "$resdir"/1.pdf --outfile "$tmpdir"/jam1-"$i".pdf
-    pdfjam --quiet --scale "$SCALE7" --offset "$OFFSET7 ${pos[i]}" "$resdir"/7.pdf --outfile "$tmpdir"/jam7-"$i".pdf
-done
-
-# Separate input pages
-pdftk "$infile" cat 1 output "$tmpdir"/stamp-0.pdf
-pdftk "$infile" cat 2 output "$tmpdir"/back.pdf
-
-# Combine entries
-for i in ${!pos[@]}; do
-    pdftk "$tmpdir"/jam8-"$i".pdf  stamp "$tmpdir"/jam1-"$i".pdf   output "$tmpdir"/tmp-"$i".pdf
-    pdftk "$tmpdir"/tmp-"$i".pdf   stamp "$tmpdir"/jam7-"$i".pdf   output "$tmpdir"/jamall-"$i".pdf
-    pdftk "$tmpdir"/stamp-"$i".pdf stamp "$tmpdir"/jamall-"$i".pdf output "$tmpdir"/stamp-"$((i+1))".pdf
-done
-
-# Generate final file
-pdfunite "$tmpdir"/stamp-${#pos[@]}.pdf "$tmpdir"/back.pdf "$outfile"
+pdf2ps "$infile" "$inputps"
+python "$srcdir"/process.py "$inputps" "$outputps" "${pos[@]}"
+ps2pdf "$outputps" "$outfile"
 
 # Clean up
 [[ "$DEBUG" != "1" ]] && rm -rf "$tmpdir"
