@@ -18,8 +18,23 @@ sudo apt-get install file poppler-utils bc pdfjam pdftk
 bash src/faas.sh example/input.pdf example/output.pdf
 ```
 
+### REST API Requirements
+```bash
+sudo apt-get install python3 python3-pip
+sudo pip3 install -r requirements.txt
+```
+
+### Starting REST API 
+```bash
+python web.py
+```
+
+### Using REST API
+```bash
+curl -o 'output.pdf' -F 'file=@example/input.pdf' 'http://localhost:5000/v1/'
+```
+
 ### Future work (contributions welcome)
-- Implement the actual "as a service"
 - Add personal signature
 - Add personal handwriting style for numbers
 - Add some stochastic variations
