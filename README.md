@@ -27,13 +27,13 @@ sudo apt-get install python-flask
 
 ##### Starting REST API 
 ```bash
-python web.py
+python src/server.py
 ```
 
 ##### Using REST API
 ```bash
 sudo apt-get install curl
-curl -o 'output.pdf' -F 'file=@example/input.pdf' 'http://localhost:5000/v1/'
+curl -o 'output.pdf' -F 'file=@example/input.pdf' 'http://localhost:5000/'
 ```
 
 ### Future work (contributions welcome)

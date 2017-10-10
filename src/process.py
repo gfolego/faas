@@ -46,7 +46,6 @@ def parse_args(argv):
     parser.add_argument('-d', '--debug', action='store_true',
                             help='activate debug mode')
 
-
     args = parser.parse_args(args=argv)
     return args
 
