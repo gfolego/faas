@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<title>Folha-as-a-Service</title>
+	<script>
+		function updateSize() {
+			var bytes = 0;
+			var fileList = document.getElementById("uploadInput").files;
+			var count = fileList.length;
+
+			if (count == null || count == 0)
+			{
+				$('p').hide();
+				return;
+			}
+
+			for (var i = 0; i < count; i++) bytes += fileList[i].size;
+
+			var output = bytes + " bytes";
+			var table = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+			// optional code for multiples approximation
+			for (multiple = 0, approx = bytes / 1024; approx > 1; approx /= 1024, multiple++) {
+				output = approx.toFixed(3) + " " + table[multiple];
+			}
+			// end of optional code
+			$("#fileName").text(fileList[0].name);
+			$("#fileSize").text(output);
+			$('form p').show();
+		}
+
+
+	</script>
+	<style>
+		html * {
+			font-family: "Lato", sans-serif;
+			font-size: 20px;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			text-align: center;
+			/*background-color: #91877b;*/
+			background-color: #0e8dbc;
+			color: #fff;
+		}
+
+		h1.classic {
+			font-size: 4em;
+			background: #91877b;
+  			text-shadow: 0px 1px 0 rgba(255, 255, 255, 0.4), 0px 1px 0 rgba(255, 255, 255, 0.2);
+			color: #47433d;
+		}
+
+		h1.modern {
+			font-size: 4em;
+			/*background: #0e8dbc;*/
+			color: white;
+			text-shadow: 0 1px 0 #ccc,
+						0 2px 0 #c9c9c9,
+						0 3px 0 #bbb,
+						0 4px 0 #b9b9b9,
+						0 5px 0 #aaa,
+						0 6px 1px rgba(0,0,0,.1),
+						0 0 5px rgba(0,0,0,.1),
+						0 1px 3px rgba(0,0,0,.3),
+						0 3px 5px rgba(0,0,0,.2),
+						0 5px 10px rgba(0,0,0,.25),
+						0 10px 10px rgba(0,0,0,.2),
+						0 20px 20px rgba(0,0,0,.15);
+		}
+
+		div.container {
+			margin: 0 auto;
+			text-align: center;
+			width: 800px;
+		}
+
+		#fileName {
+			font-weight: bold;
+		}
+
+		form .button,
+		form button {
+			padding: .4em 1em;
+			display: inline-block;
+			position: relative;
+			line-height: normal;
+			margin: 1em;
+			cursor: pointer;
+			vertical-align: middle;
+			text-align: center;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			overflow: visible;
+			border: 1px solid #cccccc;
+			background: #e7e7e7;
+			font-weight: normal;
+			color: #2b2b2b;
+			cursor: pointer;
+			box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.4);
+			-webkit-transition: all .1s;
+			-moz-transition: all .1s;
+			transition: all .1s;
+		}
+
+		form .button:hover,
+		form .button:focus,
+		form button:hover,
+		form button:focus
+		{
+			border: 1px solid #ddd;
+			background: #fefefe;
+			color: #2b2b2b;
+			-webkit-transition: all .1s;
+			-moz-transition: all .1s;
+			transition: all .1s;
+		}
+	</style>
+</head>
+
+<body onload="updateSize();">
+
+	<div class='container'>
+		<h1 class='modern'>Folha-as-a-Service</h1>
+		<form name="uploadForm" action="/" method="POST" enctype="multipart/form-data">
+			<p>Selecionado arquivo <span id='fileName'></span> (<span id='fileSize'></span> bytes)</p>
+			<input id="uploadInput" class='button' type="file" accept="application/pdf" name="file" onchange="updateSize();" style='display: none'>
+			<button type="button" id='uploadButton'>Escolher arquivo...</button>
+			<button type="submit" value="Processar">Processar</button>
+		</form>
+	<div>
+
+		<script>
+			$("#uploadButton").click(function () {
+   				$("#uploadInput").trigger('click');
+			});
+			$('form p').hide();
+			$('form p').hide();
+		</script>
+
+</html>
