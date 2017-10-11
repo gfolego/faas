@@ -39,6 +39,7 @@ curl --output 'example/output.pdf' --form 'file=@example/input.pdf' 'http://loca
 ### Future work (contributions welcome)
 - Improve user experience
 - Improve deployment
+- Add logging (for future analytics)
 - Convert `faas.sh` to Python
 - Add personal signature
 - Add personal handwriting style for numbers
