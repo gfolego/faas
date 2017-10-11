@@ -22,7 +22,7 @@
 
 
 import os
-from flask import Flask, request, redirect, send_from_directory, after_this_request
+from flask import Flask, request, redirect, send_from_directory, after_this_request, render_template
 from werkzeug.utils import secure_filename
 
 from subprocess import call
@@ -43,44 +43,38 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['POST'])
 def upload_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            tmppath = tempfile.mkdtemp()
-            print(tmppath)
+	# check if the post request has the file part
+	if 'file' not in request.files:
+		flash('No file part')
+		return redirect(request.url)
+	file = request.files['file']
+	# if user does not select file, browser also
+	# submit a empty part without filename
+	if file.filename == '':
+		flash('No selected file')
+		return redirect(request.url)
+	if file and allowed_file(file.filename):
+		tmppath = tempfile.mkdtemp()
+		print(tmppath)
 
-            filename = secure_filename(file.filename)
-            infile = os.path.join(tmppath, filename)
-            outfile = os.path.join(tmppath, OUTFILE)
-            file.save(os.path.join(tmppath, filename))
+		filename = secure_filename(file.filename)
+		infile = os.path.join(tmppath, filename)
+		outfile = os.path.join(tmppath, OUTFILE)
+		file.save(os.path.join(tmppath, filename))
 
-            srcpath = os.path.dirname(os.path.realpath(__file__))
-            call(['bash', os.path.join(srcpath, SCRIPT), infile, outfile])
+		srcpath = os.path.dirname(os.path.realpath(__file__))
+		call(['bash', os.path.join(srcpath, SCRIPT), infile, outfile])
 
-            @after_this_request
-            def cleanup(response):
-                shutil.rmtree(tmppath)
-                return response
+		@after_this_request
+		def cleanup(response):
+			shutil.rmtree(tmppath)
+			return response
 
-            return send_from_directory(tmppath, OUTFILE)
+		return send_from_directory(tmppath, OUTFILE)
 
-    return '''
-    <!doctype html>
-    <title>Folha as a Service (FaaS)</title>
-    <h1>Folha as a Service (FaaS)</h1>
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+
+@app.route('/', methods=['GET'])
+def web_interface():
+    return render_template('faas.html')
