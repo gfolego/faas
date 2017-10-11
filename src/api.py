@@ -22,16 +22,20 @@
 
 
 import os
-from flask import Flask, request, redirect, url_for, send_from_directory
+from flask import Flask, request, redirect, send_from_directory, after_this_request
 from werkzeug.utils import secure_filename
+
 from subprocess import call
+import tempfile
+import shutil
 
 
-UPLOAD_FOLDER = '/tmp'
+TMPPATH = '/tmp'
+OUTFILE='faas.pdf'
+SCRIPT='faas.sh'
 ALLOWED_EXTENSIONS = set(['pdf'])
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def allowed_file(filename):
@@ -53,15 +57,23 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
+            tmppath = tempfile.mkdtemp()
+            print(tmppath)
+
             filename = secure_filename(file.filename)
-            infile = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            outfile = os.path.join(app.config['UPLOAD_FOLDER'], 'faas.pdf')
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            infile = os.path.join(tmppath, filename)
+            outfile = os.path.join(tmppath, OUTFILE)
+            file.save(os.path.join(tmppath, filename))
 
-            dir_path = os.path.dirname(os.path.realpath(__file__))
-            call(['bash', dir_path + '/faas.sh', infile, outfile])
+            srcpath = os.path.dirname(os.path.realpath(__file__))
+            call(['bash', os.path.join(srcpath, SCRIPT), infile, outfile])
 
-            return send_from_directory(app.config['UPLOAD_FOLDER'], 'faas.pdf')
+            @after_this_request
+            def cleanup(response):
+                shutil.rmtree(tmppath)
+                return response
+
+            return send_from_directory(tmppath, OUTFILE)
 
     return '''
     <!doctype html>
