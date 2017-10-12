@@ -2,7 +2,7 @@
 In many Brazilian companies, we have to fill out the "*folha ponto*", which is basically a time sheet stating when we arrived at work, and when we left.
 This is usually a cumbersome and merely bureaucratic task.
 
-Facilitating this process, we released **Folha as a Service (FaaS)**.
+Facilitating this process, we released *Folha as a Service (FaaS)*.
 
 **Contributions welcome**: check [open issues](https://github.com/gfolego/faas/issues)
 
