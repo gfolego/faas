@@ -36,6 +36,7 @@ SCRIPT='faas.sh'
 ALLOWED_EXTENSIONS = set(['pdf'])
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 # 1 MB
 
 
 def allowed_file(filename):
