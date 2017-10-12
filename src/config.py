@@ -1,4 +1,5 @@
-# Dockerfile
+
+# config.py
 # Copyright 2017 Guilherme Folego (gfolego@gmail.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +15,15 @@
 # limitations under the License.
 
 
-FROM ubuntu:16.04
+# Gunicorn config file
 
-RUN apt-get update && apt-get install -y \
-    file \
-    poppler-utils \
-    bc \
-    ghostscript \
-    python \
-    python-flask \
-    gunicorn \
-    tzdata \
-&& rm -rf /var/lib/apt/lists/* \
-&& ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
-&& dpkg-reconfigure -f noninteractive tzdata
+bind = '0.0.0.0:5000'
+workers = 4
 
-COPY src /faas
+# Must choose one
+preload = False
+reload = True
 
-CMD ["gunicorn", \
-        "--config", "/faas/config.py", \
-        "api:app"]
+chdir = '/faas'
+
+accesslog = '-'
