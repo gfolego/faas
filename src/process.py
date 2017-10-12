@@ -195,6 +195,9 @@ def pipeline(infile, outfile,
     # Convert PS to PDF
     subprocess.call(['ps2pdf', ps_outfile, outfile])
 
+    # Cleanup
+    os.unlink(ps_infile)
+    os.unlink(ps_outfile)
 
 
 # Main
