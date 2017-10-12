@@ -77,4 +77,4 @@ def upload_file():
 
 @app.route('/', methods=['GET'])
 def web_interface():
-    return render_template('faas.html')
+    return render_template('index.html')
