@@ -9,31 +9,30 @@ Facilitating this process, we released *Folha as a Service (FaaS)*.
 **Contributors**: check [list](https://github.com/gfolego/faas/blob/master/CONTRIBUTORS.md)
 
 
-### FaaS Standalone
-##### Requirements
+### FaaS Deployment
+This guide assumes [Docker](https://www.docker.com/) is properly installed and configured.
+
+##### Build docker image
 ```bash
-sudo apt-get install file poppler-utils bc ghostscript python
+docker build --tag faas --file docker/Dockerfile --pull .
 ```
 
-##### Using
+##### Run docker container
 ```bash
-bash src/faas.sh example/input.pdf example/output.pdf
+docker run --publish 5000:5000 --name faas faas
 ```
 
-### FaaS Server (REST API)
-##### Requirements
+##### Using FaaS
+Now, it is possible to access the web interface through `http://localhost:5000`.
+It is also possible to access the REST API interface through command line:
 ```bash
-sudo apt-get install python-flask
+curl --output 'example/output.pdf' --form 'file=@example/input.pdf' 'http://localhost:5000'
 ```
 
-##### Starting server
+##### Updating FaaS
+In case the repository is updated, just copy the new code to the docker container,
+and [Gunicorn](http://gunicorn.org/) will reload it automatically:
 ```bash
-python src/server.py
-```
-
-##### Using REST API
-```bash
-sudo apt-get install curl
-curl --output 'example/output.pdf' --form 'file=@example/input.pdf' 'http://localhost:5000/'
+docker cp src/. faas:/faas
 ```
 
