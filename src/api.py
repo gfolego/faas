@@ -72,7 +72,7 @@ def upload_file():
 			shutil.rmtree(tmppath)
 			return response
 
-		return send_from_directory(tmppath, OUTFILE)
+		return send_from_directory(tmppath, OUTFILE, as_attachment=True)
 
 
 @app.route('/', methods=['GET'])
