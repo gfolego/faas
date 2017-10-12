@@ -41,6 +41,8 @@ fi
 infile="$1"
 outfile="$2"
 
+echo "$1"
+
 
 if [[ ! -f "$infile" ]] ; then
     echo "File $infile not found."
@@ -87,9 +89,6 @@ srcdir="$(dirname "$0")/"
 ############
 
 
-echo -e "Processing started\nThis may take a minute..."
-
-
 # Calculate pdf size (height)
 size=$(pdfinfo "$infile" | grep "^Page size:" | sed -e s,.*x\ ,, -e s,\ .*,,)
 [[ "$DEBUG" == "1" ]] && echo "Size: $size"
@@ -112,6 +111,4 @@ ps2pdf "$outputps" "$outfile"
 
 # Clean up
 [[ "$DEBUG" != "1" ]] && rm -rf "$tmpdir"
-
-echo "Success generating $outfile"
 

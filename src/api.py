@@ -58,7 +58,6 @@ def upload_file():
 		return redirect(request.url)
 	if file and allowed_file(file.filename):
 		tmppath = tempfile.mkdtemp()
-		print(tmppath)
 
 		filename = secure_filename(file.filename)
 		infile = os.path.join(tmppath, filename)
