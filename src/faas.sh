@@ -48,13 +48,13 @@ if [[ ! -f "$infile" ]] ; then
 fi
 
 
-if [[ "$infile" != *.pdf ]] || [[ $(file --mime-type -b "$infile") != application/pdf ]] ; then
+if [[ "${infile,,}" != *.pdf ]] || [[ $(file --mime-type -b "$infile") != application/pdf ]] ; then
     echo "File $infile is not a PDF."
     exit 1
 fi
 
 
-if [[ "$outfile" != *.pdf ]] ; then
+if [[ "${outfile,,}" != *.pdf ]] ; then
     echo "File $outfile is not a PDF."
     exit 1
 fi
