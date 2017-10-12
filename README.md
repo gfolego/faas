@@ -8,6 +8,9 @@ Ideally, there will be a server where employees can submit their HR issued blank
 
 Please note that this is *saturday afternoon* quality code, *i.e.*, it is primarily intended to work, rather been being fast, flexible or extensible.
 
+**Contributions welcome**: check [open issues](https://github.com/gfolego/faas/issues)
+
+
 ### FaaS Standalone
 ##### Requirements
 ```bash
@@ -36,14 +39,6 @@ sudo apt-get install curl
 curl --output 'example/output.pdf' --form 'file=@example/input.pdf' 'http://localhost:5000/'
 ```
 
-### Future work (contributions welcome)
-- Improve user experience
-- Improve deployment
-- Add logging (for future analytics)
-- Convert `faas.sh` to Python
-- Add personal signature
-- Add personal handwriting style for numbers
-- Add some stochastic variations
 
 ### Contributors (in alphabetical order)
 - Bruno Ribeiro
