@@ -29,6 +29,8 @@ from subprocess import call
 import tempfile
 import shutil
 
+from process import pipeline
+
 
 TMPPATH = '/tmp'
 OUTFILE='faas.pdf'
@@ -65,7 +67,9 @@ def upload_file():
 		file.save(os.path.join(tmppath, filename))
 
 		srcpath = os.path.dirname(os.path.realpath(__file__))
-		call(['bash', os.path.join(srcpath, SCRIPT), infile, outfile])
+
+                # Ready to accept new arguments
+                pipeline(infile, outfile)
 
 		@after_this_request
 		def cleanup(response):

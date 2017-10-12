@@ -40,17 +40,18 @@ PS_TABLE_OFFSET = 718.78
 import sys
 import argparse
 
+import subprocess
+import os
+
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('infile', metavar='input.ps', type=argparse.FileType('r'),
-                            help='input PostScript file')
-    parser.add_argument('outfile', metavar='output.ps', type=argparse.FileType('w'),
-                            help='output PostScript file')
-    parser.add_argument('pos', metavar='position', type=float, nargs='+',
-                            help='positions for time entries')
+    parser.add_argument('infile', metavar='input.pdf', type=str,
+                            help='input PDF file')
+    parser.add_argument('outfile', metavar='output.pdf', type=str,
+                            help='output PDF file')
     parser.add_argument('-s', '--start', type=str, default=START_STR,
                             help='string to be used as start time')
     parser.add_argument('-e', '--end', type=str, default=END_STR,
@@ -64,11 +65,12 @@ def parse_args(argv):
     return args
 
 
-def process(infile, outfile, slots,
+def process_ps(infile, outfile, slots,
         startstr=START_STR, endstr=END_STR,
         dashed=False, debug=False):
 
-    content = infile.read()
+    with open(infile) as f:
+        content = f.read()
 
     pos1 = content.find("COLABORADOR)Tj")
     pos2 = content.rfind("<</Length", 0, pos1);
@@ -124,15 +126,16 @@ def process(infile, outfile, slots,
     pos1 = content.find('Q\nQ\n\n')
     content = content[:pos1 + 5] + '\n' + '\n'.join(extra) + '\n' + content[pos1 + 5:]
 
-    outfile.write(firstPart)
-    outfile.write("<</Length ")
-    outfile.write(str(len(content)))
-    outfile.write(">>stream\n")
-    outfile.write(content)
-    outfile.write(lastPart)
+    with open(outfile, 'w') as f:
+        f.write(firstPart)
+        f.write("<</Length ")
+        f.write(str(len(content)))
+        f.write(">>stream\n")
+        f.write(content)
+        f.write(lastPart)
 
 
-def coordinatesToSlots(pos):
+def coordinates2slots(pos):
     """ Return a boolean list indicating which slots are in use """
 
     slots = [ False for i in range(0, 31)]
@@ -151,6 +154,49 @@ def coordinatesToSlots(pos):
     return slots
 
 
+# Return time positions (originally written in Bash)
+# We know "shell=True" is less than ideal -- contributions welcome!
+def find_positions(infile):
+    size = subprocess.check_output(
+        'pdfinfo "%s" | grep "^Page size:" | sed -e s,.*x\ ,, -e s,\ .*,,' % infile,
+        shell=True).rstrip('\n')
+
+    pos = subprocess.check_output(
+	'pdftotext "%s" -bbox /dev/stdout | '
+	'grep ">-----</word>" -B1 | '
+	'grep ">[0-9][0-9]</word>" | '
+	'cut -f4,8 -d\\" | sed s,\\",+, | bc | '
+	'xargs -i echo "%s"-{}*0.5 | bc' % (infile, size),
+	shell=True).rstrip('\n').splitlines()
+
+    pos = [float(i) for i in pos]
+    return pos
+
+
+def pipeline(infile, outfile,
+        start=START_STR, end=END_STR,
+        dashed=False, debug=False):
+
+    # Find positions
+    pos = find_positions(infile)
+
+    # find out which days are working days
+    slots = coordinates2slots(pos)
+
+    # Convert PDF to PS
+    ps_infile = os.path.join(os.path.dirname(outfile), 'infile.ps')
+    ps_outfile = os.path.join(os.path.dirname(outfile), 'outfile.ps')
+    subprocess.call(['pdf2ps', infile, ps_infile])
+
+    # generate a new PostScript file
+    process_ps(ps_infile, ps_outfile, slots,
+            start, end, dashed, debug)
+
+    # Convert PS to PDF
+    subprocess.call(['ps2pdf', ps_outfile, outfile])
+
+
+
 # Main
 def main(argv):
 
@@ -158,11 +204,9 @@ def main(argv):
     args = parse_args(argv)
     if args.debug: print(args)
 
-    # find out which days are working days
-    slots = coordinatesToSlots(args.pos)
-    # generate a new PostScript file
-    process(args.infile, args.outfile, slots,
-            args.start, args.end, args.dashed, args.debug)
+    pipeline(args.infile, args.outfile,
+            args.start, args.end,
+            args.dashed, args.debug)
 
 
 if __name__ == "__main__":
