@@ -24,6 +24,18 @@
 START_STR='08:00'
 END_STR='17:00'
 
+# PostScript definitions
+PS_GRAY_DARK = '.4 setgray'
+PS_GRAY_LIGHT = '.8 setgray'
+PS_START_CENTER_X = 68
+PS_END_CENTER_X = 186
+PS_SIGNATURE_X = 418
+PS_SIG_CENTER_X = 418 + 154 / 2
+PS_DASH_W = 100
+PS_DOT_OFFSET = 5
+PS_TABLE_CELL_Y = 18.78
+PS_TABLE_OFFSET = 718.78
+
 
 import sys
 import argparse
@@ -43,6 +55,8 @@ def parse_args(argv):
                             help='string to be used as start time')
     parser.add_argument('-e', '--end', type=str, default=END_STR,
                             help='string to be used as end time')
+    parser.add_argument('--dashed', action='store_true',
+                            help='put a dash in the signature for non-working days')
     parser.add_argument('-d', '--debug', action='store_true',
                             help='activate debug mode')
 
@@ -50,9 +64,9 @@ def parse_args(argv):
     return args
 
 
-def process(infile, outfile, pos,
+def process(infile, outfile, slots,
         startstr=START_STR, endstr=END_STR,
-        debug=False):
+        dashed=False, debug=False):
 
     content = infile.read()
 
@@ -77,17 +91,34 @@ def process(infile, outfile, pos,
     # Note: at the point this extra content is inserted, the coordinate system is reset to its
     # default (i.e. origin is located at the bottom left corner of the page)
 
-    # fix the y positions
-    pos = [ y - 1 for y in pos ]
-
     # create PostScript entries using some dark magic
-    for y in pos:
-        # write the start time
-        extra.append('68 ' + str(y) + ' moveto')
-        extra.append('(' + startstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
-        # write the end time
-        extra.append('186 ' + str(y) + ' moveto')
-        extra.append('(' + endstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
+    for i in range(0, len(slots)):
+        y = PS_TABLE_OFFSET - i * PS_TABLE_CELL_Y
+        if slots[i]:
+            # write the start time
+            extra.append(PS_GRAY_DARK)
+            extra.append(str(PS_START_CENTER_X) + ' ' + str(y) + ' moveto')
+            extra.append('(' + startstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
+            # write the end time
+            extra.append(PS_GRAY_DARK)
+            extra.append(str(PS_END_CENTER_X) + ' ' + str(y) + ' moveto')
+            extra.append('(' + endstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
+            # write a dot in the signature if the dash is disabled
+            if not dashed:
+                extra.append('newpath')
+                extra.append(str(PS_SIGNATURE_X + PS_DOT_OFFSET)     + ' ' + str(y + 2) + ' moveto')
+                extra.append(str(PS_SIGNATURE_X + PS_DOT_OFFSET + 1) + ' ' + str(y + 2) + ' lineto')
+                extra.append('1 setlinewidth')
+                extra.append(PS_GRAY_DARK)
+                extra.append('stroke')
+        elif dashed:
+            # write a dash in the signature slot
+            extra.append('newpath')
+            extra.append(str(PS_SIG_CENTER_X - PS_DASH_W / 2) + ' ' + str(y + 2) + ' moveto')
+            extra.append(str(PS_SIG_CENTER_X + PS_DASH_W / 2) + ' ' + str(y + 2) + ' lineto')
+            extra.append('.5 setlinewidth')
+            extra.append(PS_GRAY_LIGHT)
+            extra.append('stroke')
 
     # insert any extra content at the end of the stream (later content has higher z-index)
     pos1 = content.find('Q\nQ\n\n')
@@ -101,6 +132,25 @@ def process(infile, outfile, pos,
     outfile.write(lastPart)
 
 
+def coordinatesToSlots(pos):
+    """ Return a boolean list indicating which slots are in use """
+
+    slots = [ False for i in range(0, 31)]
+    offset = PS_TABLE_OFFSET + PS_TABLE_CELL_Y / 2
+    j = 0
+    for i in range(0, len(slots)):
+        offset -= PS_TABLE_CELL_Y
+        if pos[j] > offset:
+            slots[i] = True
+            j += 1
+        else:
+            slots[i] = False
+
+        if len(pos) <= j: break
+
+    return slots
+
+
 # Main
 def main(argv):
 
@@ -108,8 +158,11 @@ def main(argv):
     args = parse_args(argv)
     if args.debug: print(args)
 
-    process(args.infile, args.outfile, args.pos,
-            args.start, args.end, args.debug)
+    # find out which days are working days
+    slots = coordinatesToSlots(args.pos)
+    # generate a new PostScript file
+    process(args.infile, args.outfile, slots,
+            args.start, args.end, args.dashed, args.debug)
 
 
 if __name__ == "__main__":
