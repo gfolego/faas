@@ -24,9 +24,12 @@ RUN apt-get update && apt-get install -y \
     python \
     python-flask \
     gunicorn \
-&& rm -rf /var/lib/apt/lists/*
+    tzdata \
+&& rm -rf /var/lib/apt/lists/* \
+&& ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
+&& dpkg-reconfigure -f noninteractive tzdata
 
-ADD src /faas/
+COPY src /faas
 
 CMD ["gunicorn", \
         "--bind", "0.0.0.0:5000", \
