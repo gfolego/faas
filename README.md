@@ -10,6 +10,8 @@ Please note that this is *saturday afternoon* quality code, *i.e.*, it is primar
 
 **Contributions welcome**: check [open issues](https://github.com/gfolego/faas/issues)
 
+**Contributors**: check [list](https://github.com/gfolego/faas/blob/master/CONTRIBUTORS.md)
+
 
 ### FaaS Standalone
 ##### Requirements
@@ -39,8 +41,3 @@ sudo apt-get install curl
 curl --output 'example/output.pdf' --form 'file=@example/input.pdf' 'http://localhost:5000/'
 ```
 
-
-### Contributors (in alphabetical order)
-- Bruno Ribeiro
-- Fábio Beranizo (fabio.beranizo@gmail.com)
-- Guilherme Folego (gfolego@gmail.com)
