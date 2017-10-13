@@ -25,7 +25,7 @@ START_STR='08:00'
 END_STR='17:00'
 
 # PostScript definitions
-PS_GRAY_DARK = '.4 setgray'
+PS_GRAY_DARK = '.2 setgray'
 PS_GRAY_LIGHT = '.8 setgray'
 PS_START_CENTER_X = 68
 PS_END_CENTER_X = 186
@@ -108,10 +108,10 @@ def process_ps(infile, outfile, slots,
             # write a dot in the signature if the dash is disabled
             if not dashed:
                 extra.append('newpath')
-                extra.append(str(PS_SIGNATURE_X + PS_DOT_OFFSET)     + ' ' + str(y + 2) + ' moveto')
-                extra.append(str(PS_SIGNATURE_X + PS_DOT_OFFSET + 1) + ' ' + str(y + 2) + ' lineto')
+                extra.append(str(PS_SIGNATURE_X + PS_DOT_OFFSET)     + ' ' + str(y - 2) + ' moveto')
+                extra.append(str(PS_SIGNATURE_X + PS_DOT_OFFSET + 1) + ' ' + str(y - 2) + ' lineto')
                 extra.append('1 setlinewidth')
-                extra.append(PS_GRAY_DARK)
+                extra.append(PS_GRAY_LIGHT)
                 extra.append('stroke')
         elif dashed:
             # write a dash in the signature slot
