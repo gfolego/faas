@@ -23,6 +23,7 @@
 # Definitions
 START_STR='08:00'
 END_STR='17:00'
+FMT_STR='%H:%M'
 
 # PostScript definitions
 PS_GRAY_DARK = '.2 setgray'
@@ -43,6 +44,9 @@ import argparse
 import subprocess
 import os
 
+from datetime import datetime, timedelta
+import random
+
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
@@ -56,6 +60,8 @@ def parse_args(argv):
                             help='string to be used as start time')
     parser.add_argument('-e', '--end', type=str, default=END_STR,
                             help='string to be used as end time')
+    parser.add_argument('-v', '--variation', type=int, default=0,
+                            help='random variation in minutes')
     parser.add_argument('--dashed', action='store_true',
                             help='put a dash in the signature for non-working days')
     parser.add_argument('-d', '--debug', action='store_true',
@@ -65,8 +71,23 @@ def parse_args(argv):
     return args
 
 
+def randomize_hours(startstr=START_STR, endstr=END_STR, variation=0):
+    variation = abs(variation)
+    rnd = random.randint(-variation, +variation)
+    rnd_dt = timedelta(minutes=rnd)
+
+    start = datetime.strptime(startstr, FMT_STR) + rnd_dt
+    end = datetime.strptime(endstr, FMT_STR) + rnd_dt
+
+    randstartstr = start.strftime(FMT_STR)
+    randendstr = end.strftime(FMT_STR)
+
+    return randstartstr, randendstr
+
+
 def process_ps(infile, outfile, slots,
         startstr=START_STR, endstr=END_STR,
+        variation=0,
         dashed=False, debug=False):
 
     with open(infile) as f:
@@ -97,14 +118,16 @@ def process_ps(infile, outfile, slots,
     for i in range(0, len(slots)):
         y = PS_TABLE_OFFSET - i * PS_TABLE_CELL_Y
         if slots[i]:
+            randstartstr, randendstr = randomize_hours(startstr, endstr, variation)
+
             # write the start time
             extra.append(PS_GRAY_DARK)
             extra.append(str(PS_START_CENTER_X) + ' ' + str(y) + ' moveto')
-            extra.append('(' + startstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
+            extra.append('(' + randstartstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
             # write the end time
             extra.append(PS_GRAY_DARK)
             extra.append(str(PS_END_CENTER_X) + ' ' + str(y) + ' moveto')
-            extra.append('(' + endstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
+            extra.append('(' + randendstr + ') dup stringwidth pop 2 div neg 0 rmoveto show')
             # write a dot in the signature if the dash is disabled
             if not dashed:
                 extra.append('newpath')
@@ -175,6 +198,7 @@ def find_positions(infile):
 
 def pipeline(infile, outfile,
         start=START_STR, end=END_STR,
+        variation=0,
         dashed=False, debug=False):
 
     # Find positions
@@ -190,7 +214,7 @@ def pipeline(infile, outfile,
 
     # generate a new PostScript file
     process_ps(ps_infile, ps_outfile, slots,
-            start, end, dashed, debug)
+            start, end, variation, dashed, debug)
 
     # Convert PS to PDF
     subprocess.call(['ps2pdf', ps_outfile, outfile])
@@ -208,7 +232,7 @@ def main(argv):
     if args.debug: print(args)
 
     pipeline(args.infile, args.outfile,
-            args.start, args.end,
+            args.start, args.end, args.variation,
             args.dashed, args.debug)
 
 
