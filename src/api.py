@@ -29,10 +29,14 @@ from subprocess import call
 import tempfile
 import shutil
 
-from process import pipeline
+from process import pipeline, FMT_STR
 
 import sys
 import argparse
+
+from distutils.util import strtobool
+from datetime import datetime
+
 
 # Definitions
 HOST='0.0.0.0'
@@ -45,6 +49,22 @@ ALLOWED_EXTENSIONS = set(['pdf'])
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 # 1 MB
+
+
+def parse_form(form):
+    form = form.to_dict()
+    if 'dashed' in form:
+        form['dashed'] = bool(strtobool(form['dashed']))
+    if 'debug' in form:
+        form['debug'] = bool(strtobool(form['debug']))
+    if 'variation' in form:
+        form['variation'] = int(form['variation'])
+    if 'start' in form:
+        datetime.strptime(form['start'], FMT_STR)
+    if 'end' in form:
+        datetime.strptime(form['end'], FMT_STR)
+
+    return form
 
 
 def allowed_file(filename):
@@ -75,7 +95,8 @@ def upload_file():
 		srcpath = os.path.dirname(os.path.realpath(__file__))
 
                 # Ready to accept new arguments
-                pipeline(infile, outfile)
+                options = parse_form(request.form)
+                pipeline(infile, outfile, **options)
 
 		@after_this_request
 		def cleanup(response):
