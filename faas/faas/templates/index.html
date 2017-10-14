@@ -1,208 +1,206 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-	<meta charset="UTF-8">
-	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-	<title>Folha as a Service (FaaS)</title>
-	<script>
-		function updateSize() {
-			var bytes = 0;
-			var fileList = document.getElementById("uploadInput").files;
-			var count = fileList.length;
+{% block head %}
+{{ super() }}
 
-			if (count == null || count == 0)
-			{
-				$('#state1').show();
-				$('#state2').hide();
-				$('#process').hide();
-				return;
-			}
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+function updateSize() {
+    var bytes = 0;
+    var fileList = document.getElementById("uploadInput").files;
+    var count = fileList.length;
 
-			for (var i = 0; i < count; i++) bytes += fileList[i].size;
+    if (count == null || count == 0)
+    {
+        $('#state1').show();
+        $('#state2').hide();
+        $('#process').hide();
+        return;
+    }
 
-			var output = bytes + " bytes";
-			var table = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+    for (var i = 0; i < count; i++) bytes += fileList[i].size;
 
-			for (multiple = 0, approx = bytes / 1024; approx > 1; approx /= 1024, multiple++)
-				output = approx.toFixed(1) + " " + table[multiple];
+    var output = bytes + " bytes";
+    var table = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 
-			$("#fileName").text(fileList[0].name);
-			$("#fileSize").text(output);
-			$('#state1').hide();
-			$('#state2').show();
-			$('#process').show();
-		}
-	</script>
-	<style>
-		html * {
-			font-family: "Lato", sans-serif;
-			font-size: 20px;
-			-webkit-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
+    for (multiple = 0, approx = bytes / 1024; approx > 1; approx /= 1024, multiple++)
+        output = approx.toFixed(1) + " " + table[multiple];
 
-		}
+    $("#fileName").text(fileList[0].name);
+    $("#fileSize").text(output);
+    $('#state1').hide();
+    $('#state2').show();
+    $('#process').show();
+}
+</script>
+<style>
+html * {
+    font-family: "Lato", sans-serif;
+    font-size: 20px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
-		body {
-			margin: 0;
-			padding: 4em 0 0 0;
-			text-align: center;
-			/*background-color: #91877b;*/
-			background-color: #222;
-			color: #fff;
-		}
+}
 
-		h1.classic {
-			font-size: 4em;
-			background: #91877b;
-  			text-shadow: 0px 1px 0 rgba(255, 255, 255, 0.4), 0px 1px 0 rgba(255, 255, 255, 0.2);
-			color: #47433d;
-		}
+        body {
+            margin: 0;
+            padding: 4em 0 0 0;
+            text-align: center;
+            /*background-color: #91877b;*/
+            background-color: #222;
+            color: #fff;
+        }
 
-		h1.modern {
-			font-size: 4em;
-			margin: .2em 0 .5em 0;
-			color: white;
-			text-shadow: 0 1px 0 #ccc,
-						0 2px 0 #c9c9c9,
-						0 3px 0 #bbb,
-						0 4px 0 #b9b9b9,
-						0 5px 0 #aaa,
-						0 6px 1px rgba(0,0,0,.1),
-						0 0 5px rgba(0,0,0,.1),
-						0 1px 3px rgba(0,0,0,.3),
-						0 3px 5px rgba(0,0,0,.2),
-						0 5px 10px rgba(0,0,0,.25),
-						0 10px 10px rgba(0,0,0,.2),
-						0 20px 20px rgba(0,0,0,.15);
-		}
+        h1.classic {
+            font-size: 4em;
+            background: #91877b;
+            text-shadow: 0px 1px 0 rgba(255, 255, 255, 0.4), 0px 1px 0 rgba(255, 255, 255, 0.2);
+            color: #47433d;
+        }
 
-		h2 {
-			padding: .2em .5em;
-		}
+        h1.modern {
+            font-size: 4em;
+            margin: .2em 0 .5em 0;
+            color: white;
+            text-shadow: 0 1px 0 #ccc,
+                0 2px 0 #c9c9c9,
+                0 3px 0 #bbb,
+                0 4px 0 #b9b9b9,
+                0 5px 0 #aaa,
+                0 6px 1px rgba(0,0,0,.1),
+                0 0 5px rgba(0,0,0,.1),
+                0 1px 3px rgba(0,0,0,.3),
+                0 3px 5px rgba(0,0,0,.2),
+                0 5px 10px rgba(0,0,0,.25),
+                0 10px 10px rgba(0,0,0,.2),
+                0 20px 20px rgba(0,0,0,.15);
+        }
 
-		div.container {
-			margin: 0 auto;
-			text-align: center;
-			width: 800px;
-			max-width: 800px;
-			padding: 1.2em 1em 2em 1em;
-			background-color: #3e3e3e;
-			border-radius: 0.3em;
-			box-shadow: 0 2px 6px 0 rgba(0,0,0,0.9);
-		}
+        h2 {
+            padding: .2em .5em;
+        }
 
-		#fileName {
-			font-weight: bold;
-		}
+        div.container {
+            margin: 0 auto;
+            text-align: center;
+            width: 800px;
+            max-width: 800px;
+            padding: 1.2em 1em 2em 1em;
+            background-color: #3e3e3e;
+            border-radius: 0.3em;
+            box-shadow: 0 2px 6px 0 rgba(0,0,0,0.9);
+        }
 
-		form button {
-			padding: .4em 1em;
-			display: inline-block;
-			position: relative;
-			line-height: normal;
-			margin: 1em;
-			vertical-align: middle;
-			text-align: center;
-			overflow: visible;
-			font-weight: normal;
-			color: #fff;
-			cursor: pointer;
-			box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.4);
-			-webkit-transition: all .1s;
-			-moz-transition: all .1s;
-			transition: all .1s;
-			border-radius: 4px;
-			outline: none;
-		}
+        #fileName {
+            font-weight: bold;
+        }
 
-		form button {
-			border: 1px solid #003eff;
-			background: #007fff;
-		}
+        form button {
+            padding: .4em 1em;
+            display: inline-block;
+            position: relative;
+            line-height: normal;
+            margin: 1em;
+            vertical-align: middle;
+            text-align: center;
+            overflow: visible;
+            font-weight: normal;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.4);
+            -webkit-transition: all .1s;
+            -moz-transition: all .1s;
+            transition: all .1s;
+            border-radius: 4px;
+            outline: none;
+        }
 
-		form button:hover {
-			border: 1px solid #668cff;
-			background: #66b3ff;
-			-webkit-transition: all .1s;
-			-moz-transition: all .1s;
-			transition: all .1s;
-		}
+        form button {
+            border: 1px solid #003eff;
+            background: #007fff;
+        }
 
-		form button:disabled {
-			border: 1px solid #888;
-			background: #d7d7d7;
-			color: #444;
-			cursor: default;
-			-webkit-transition: all .1s;
-			-moz-transition: all .1s;
-			transition: all .1s;
-		}
+        form button:hover {
+            border: 1px solid #668cff;
+            background: #66b3ff;
+            -webkit-transition: all .1s;
+            -moz-transition: all .1s;
+            transition: all .1s;
+        }
 
-		div.container a{
-		  color: #825582;
-		  text-decoration: none;
-		}
+        form button:disabled {
+            border: 1px solid #888;
+            background: #d7d7d7;
+            color: #444;
+            cursor: default;
+            -webkit-transition: all .1s;
+            -moz-transition: all .1s;
+            transition: all .1s;
+        }
 
-		div.github {
-			margin-top: 2em;
-		}
+        div.container a{
+            color: #825582;
+            text-decoration: none;
+        }
 
-		div.github svg {
-			width: 60px;
-		}
+        div.github {
+            margin-top: 2em;
+        }
 
-	</style>
-</head>
+        div.github svg {
+            width: 60px;
+        }
 
-<body>
+</style>
+{% endblock %}
 
-	<div class="container">
-		<h1 class='modern'>Folha as a Service (FaaS)</h1>
-		<h1>Versão em desenvolvimento. Se considerar o FaaS útil, ajude a torná-lo ainda melhor!</h1>
-		<form name="uploadForm" action="/" method="POST" enctype="multipart/form-data">
-			<p id='state1'>Use o botão abaixo para inserir sua folha de frequência</p>
-			<p id='state2'>Selecionado arquivo <span id='fileName'></span> (<span id='fileSize'></span>)</p>
-			<input id="uploadInput" class='button' type="file" accept="application/pdf" name="file" onchange="updateSize();" style='display: none'>
-			<button type="button" id='uploadButton'>Escolher arquivo...</button>
-			<button id='process' type="submit">Processar</button><br><br>
-			<h2>Opções disponíveis</h2>
-			<input type="radio" name="dashed" value="False" checked>Pontos nas assinaturas dos dias úteis<br>
-			<input type="radio" name="dashed" value="True">Traços nas assinaturas dos dias não úteis<br><br>
-			<span style="display:inline-block; width: 190px;">Horário de entrada:</span>
-			<input type="time" name="start" value="08:00" style="width: 150px; text-align:center;"> (HH:MM)<br>
-			<span style="display:inline-block; width: 190px;">Horário de saída:</span>
-			<input type="time" name="end" value="17:00" style="width: 150px; text-align:center;"> (HH:MM)<br><br>
-			<span style="display:inline-block; width: 350px;">Variações aleatórias de horário no dia:</span>
-			<input type="number" step="1" pattern="\d+" value="0" name="variation"  style="width: 60px; text-align:center;"/> minuto(s)
-		</form>
-	</div>
+{% block body %}
 
-	<div class='github'>
-		<a href="https://github.com/gfolego/faas">
-			<svg width="90" height="32" viewBox="0 0 45 16" xmlns="http://www.w3.org/2000/svg"><title>logo-github</title><path d="M18.53 12.03h-.02.03zm0 0c-.1 0-.32.06-.57.06-.78 0-1.05-.37-1.05-.84V8.13h1.6c.1 0 .16-.08.16-.2v-1.7c0-.08-.08-.16-.16-.16h-1.6v-2.1c0-.1-.04-.14-.13-.14H14.6c-.08 0-.13.05-.13.13v2.17l-1.16.28c-.07.03-.12.1-.12.18v1.36c0 .1.08.2.17.2h1.1v3.27c0 2.45 1.7 2.7 2.87 2.7.53 0 1.17-.17 1.27-.22.05-.02.08-.1.08-.16v-1.5c0-.1-.07-.16-.15-.18zm23.7-2.2c0-1.8-.73-2.04-1.5-1.96-.6.04-1.08.34-1.08.34v3.53s.5.34 1.22.36c1.03.02 1.36-.35 1.36-2.26zm2.43-.15c0 3.43-1.1 4.4-3.05 4.4-1.63 0-2.5-.82-2.5-.82s-.05.46-.1.52c-.03.06-.08.08-.14.08h-1.48c-.1 0-.2-.08-.2-.17l.03-11.12c0-.1.1-.17.18-.17h2.13c.1 0 .18.1.18.18v3.77s.82-.53 2.02-.53V5.8c1.2 0 2.96.45 2.96 3.88zm-8.72-3.6h-2.1c-.1 0-.17.07-.17.18v5.44s-.55.4-1.3.4-.97-.35-.97-1.1V6.25c0-.1-.08-.17-.17-.17H29.1c-.1 0-.18.08-.18.17v5.1c0 2.2 1.23 2.76 2.92 2.76 1.4 0 2.52-.76 2.52-.76s.05.4.08.45c.02.04.1.08.16.08h1.34c.1 0 .17-.08.17-.17l.03-7.46c0-.1-.08-.17-.2-.17zm-23.7-.02H10.1c-.08 0-.16.1-.16.2v7.34c0 .2.13.27.3.27h1.92c.2 0 .25-.1.25-.27V6.24c0-.1-.07-.18-.16-.18zM11.2 2.68c-.78 0-1.4.6-1.4 1.38 0 .77.62 1.38 1.4 1.38.74 0 1.35-.6 1.35-1.38 0-.77-.6-1.38-1.36-1.38zm16.48-.25h-2.1c-.1 0-.18.08-.18.17v4.1h-3.3V2.6c0-.1-.1-.17-.18-.17H19.8c-.1 0-.18.08-.18.17v11.1c0 .1.1.18.17.18h2.12c.1 0 .17-.08.17-.17V8.97h3.3l-.02 4.75c0 .1.08.18.17.18h2.13c.1 0 .17-.08.17-.17V2.6c0-.1-.08-.17-.17-.17zM8.8 7.35v5.74c0 .03 0 .1-.05.12 0 0-1.25.9-3.3.9-2.5 0-5.45-.8-5.45-5.93C0 3.04 2.58 2 5.1 2c2.18 0 3.06.5 3.2.58.04.05.06.1.06.14L7.94 4.5c0 .1-.1.2-.2.17-.36-.1-.9-.33-2.17-.33-1.47 0-3.05.42-3.05 3.73 0 3.3 1.5 3.7 2.58 3.7.92 0 1.25-.1 1.25-.1v-2.3H4.88c-.1 0-.2-.1-.2-.18V7.34c0-.1.1-.17.2-.17h3.74c.1 0 .2.08.2.17z" fill="#888" fill-rule="evenodd"/></svg>
-		</a>
-	</div>
+<div class="container">
+    <h1 class='modern'>Folha as a Service (FaaS)</h1>
+    <h1>Versão em desenvolvimento. Se considerar o FaaS útil, ajude a torná-lo ainda melhor!</h1>
+    <form name="uploadForm" action="/" method="POST" enctype="multipart/form-data">
+        <p id='state1'>Use o botão abaixo para inserir sua folha de frequência</p>
+        <p id='state2'>Selecionado arquivo <span id='fileName'></span> (<span id='fileSize'></span>)</p>
+        <input id="uploadInput" class='button' type="file" accept="application/pdf" name="file" onchange="updateSize();" style='display: none'>
+        <button type="button" id='uploadButton'>Escolher arquivo...</button>
+        <button id='process' type="submit">Processar</button><br><br>
+        <h2>Opções disponíveis</h2>
+        <input type="radio" name="dashed" value="False" checked>Pontos nas assinaturas dos dias úteis<br>
+        <input type="radio" name="dashed" value="True">Traços nas assinaturas dos dias não úteis<br><br>
+        <span style="display:inline-block; width: 190px;">Horário de entrada:</span>
+        <input type="time" name="start" value="08:00" style="width: 150px; text-align:center;"> (HH:MM)<br>
+        <span style="display:inline-block; width: 190px;">Horário de saída:</span>
+        <input type="time" name="end" value="17:00" style="width: 150px; text-align:center;"> (HH:MM)<br><br>
+        <span style="display:inline-block; width: 350px;">Variações aleatórias de horário no dia:</span>
+        <input type="number" step="1" pattern="\d+" value="0" name="variation"  style="width: 60px; text-align:center;"/> minuto(s)
+    </form>
+</div>
 
-	<script>
-		$("#uploadButton").click(function () {
-			$("#uploadInput").trigger('click');
-		});
+<div class='github'>
+    <a href="https://github.com/gfolego/faas">
+        <svg width="90" height="32" viewBox="0 0 45 16" xmlns="http://www.w3.org/2000/svg"><title>logo-github</title><path d="M18.53 12.03h-.02.03zm0 0c-.1 0-.32.06-.57.06-.78 0-1.05-.37-1.05-.84V8.13h1.6c.1 0 .16-.08.16-.2v-1.7c0-.08-.08-.16-.16-.16h-1.6v-2.1c0-.1-.04-.14-.13-.14H14.6c-.08 0-.13.05-.13.13v2.17l-1.16.28c-.07.03-.12.1-.12.18v1.36c0 .1.08.2.17.2h1.1v3.27c0 2.45 1.7 2.7 2.87 2.7.53 0 1.17-.17 1.27-.22.05-.02.08-.1.08-.16v-1.5c0-.1-.07-.16-.15-.18zm23.7-2.2c0-1.8-.73-2.04-1.5-1.96-.6.04-1.08.34-1.08.34v3.53s.5.34 1.22.36c1.03.02 1.36-.35 1.36-2.26zm2.43-.15c0 3.43-1.1 4.4-3.05 4.4-1.63 0-2.5-.82-2.5-.82s-.05.46-.1.52c-.03.06-.08.08-.14.08h-1.48c-.1 0-.2-.08-.2-.17l.03-11.12c0-.1.1-.17.18-.17h2.13c.1 0 .18.1.18.18v3.77s.82-.53 2.02-.53V5.8c1.2 0 2.96.45 2.96 3.88zm-8.72-3.6h-2.1c-.1 0-.17.07-.17.18v5.44s-.55.4-1.3.4-.97-.35-.97-1.1V6.25c0-.1-.08-.17-.17-.17H29.1c-.1 0-.18.08-.18.17v5.1c0 2.2 1.23 2.76 2.92 2.76 1.4 0 2.52-.76 2.52-.76s.05.4.08.45c.02.04.1.08.16.08h1.34c.1 0 .17-.08.17-.17l.03-7.46c0-.1-.08-.17-.2-.17zm-23.7-.02H10.1c-.08 0-.16.1-.16.2v7.34c0 .2.13.27.3.27h1.92c.2 0 .25-.1.25-.27V6.24c0-.1-.07-.18-.16-.18zM11.2 2.68c-.78 0-1.4.6-1.4 1.38 0 .77.62 1.38 1.4 1.38.74 0 1.35-.6 1.35-1.38 0-.77-.6-1.38-1.36-1.38zm16.48-.25h-2.1c-.1 0-.18.08-.18.17v4.1h-3.3V2.6c0-.1-.1-.17-.18-.17H19.8c-.1 0-.18.08-.18.17v11.1c0 .1.1.18.17.18h2.12c.1 0 .17-.08.17-.17V8.97h3.3l-.02 4.75c0 .1.08.18.17.18h2.13c.1 0 .17-.08.17-.17V2.6c0-.1-.08-.17-.17-.17zM8.8 7.35v5.74c0 .03 0 .1-.05.12 0 0-1.25.9-3.3.9-2.5 0-5.45-.8-5.45-5.93C0 3.04 2.58 2 5.1 2c2.18 0 3.06.5 3.2.58.04.05.06.1.06.14L7.94 4.5c0 .1-.1.2-.2.17-.36-.1-.9-.33-2.17-.33-1.47 0-3.05.42-3.05 3.73 0 3.3 1.5 3.7 2.58 3.7.92 0 1.25-.1 1.25-.1v-2.3H4.88c-.1 0-.2-.1-.2-.18V7.34c0-.1.1-.17.2-.17h3.74c.1 0 .2.08.2.17z" fill="#888" fill-rule="evenodd"/></svg>
+    </a>
+</div>
 
-		$( "div.container form" ).submit(function( event ) {
-			if (document.getElementById("uploadInput").files.length == 0)
-			{
-				alert("Nenhum arquivo PDF selecionado!");
-				event.preventDefault();
-			}
-		});
+<script>
+$("#uploadButton").click(function () {
+    $("#uploadInput").trigger('click');
+});
 
-		$('#state2').hide();
-		$('#process').hide();
-	</script>
+$( "div.container form" ).submit(function( event ) {
+    if (document.getElementById("uploadInput").files.length == 0)
+    {
+        alert("Nenhum arquivo PDF selecionado!");
+        event.preventDefault();
+    }
+});
 
-</html>
+$('#state2').hide();
+$('#process').hide();
+</script>
+
+{% endblock %}
