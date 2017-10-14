@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 
 # config.py
 # Copyright 2017 Guilherme Folego (gfolego@gmail.com)
@@ -27,3 +29,4 @@ reload = True
 chdir = '/faas'
 
 accesslog = '-'
+

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-# api.py
+# __init__.py
 # Copyright 2017
 #     Fábio Beranizo (fabio.beranizo@gmail.com)
 #     Guilherme Folego (gfolego@gmail.com)
