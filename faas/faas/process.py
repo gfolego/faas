@@ -193,6 +193,10 @@ def find_positions(infile):
 	shell=True).rstrip('\n').splitlines()
 
     pos = [float(i) for i in pos]
+
+    if len(pos) == 0:
+        raise RuntimeError('Error processing PDF')
+
     return pos
 
 
@@ -210,14 +214,18 @@ def pipeline(infile, outfile,
     # Convert PDF to PS
     ps_infile = os.path.join(os.path.dirname(outfile), 'infile.ps')
     ps_outfile = os.path.join(os.path.dirname(outfile), 'outfile.ps')
-    subprocess.call(['pdf2ps', infile, ps_infile])
+    out = subprocess.check_output(['pdf2ps', infile, ps_infile], stderr=subprocess.STDOUT)
+    if out != "":
+        raise RuntimeError('Error processing PDF')
 
     # generate a new PostScript file
     process_ps(ps_infile, ps_outfile, slots,
             start, end, variation, dashed, debug)
 
     # Convert PS to PDF
-    subprocess.call(['ps2pdf', ps_outfile, outfile])
+    out = subprocess.check_output(['ps2pdf', ps_outfile, outfile], stderr=subprocess.STDOUT)
+    if out != "":
+        raise RuntimeError('Error processing PDF')
 
     # Cleanup
     os.unlink(ps_infile)

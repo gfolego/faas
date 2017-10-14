@@ -24,7 +24,7 @@ from faas import app
 from process import pipeline, FMT_STR
 
 import os
-from flask import request, redirect, send_from_directory, after_this_request, render_template
+from flask import request, redirect, send_from_directory, after_this_request, render_template, jsonify
 from werkzeug.utils import secure_filename
 
 import tempfile
@@ -86,9 +86,12 @@ def upload_file():
 
 		srcpath = os.path.dirname(os.path.realpath(__file__))
 
-                # Ready to accept new arguments
-                options = parse_form(request.form)
-                pipeline(infile, outfile, **options)
+		# Ready to accept new arguments
+		try:
+                        options = parse_form(request.form)
+                        pipeline(infile, outfile, **options)
+		except Exception as e:
+                        raise InvalidUsage(str(e), 400)
 
 		@after_this_request
 		def cleanup(response):
@@ -101,4 +104,27 @@ def upload_file():
 @app.route('/', methods=['GET'])
 def web_interface():
     return render_template('index.html')
+
+
+
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['error'] = self.message
+        return rv
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
 
