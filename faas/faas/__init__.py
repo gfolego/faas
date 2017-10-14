@@ -1,5 +1,11 @@
-# Dockerfile
-# Copyright 2017 Guilherme Folego (gfolego@gmail.com)
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
+# api.py
+# Copyright 2017
+#     Fábio Beranizo (fabio.beranizo@gmail.com)
+#     Guilherme Folego (gfolego@gmail.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,23 +20,8 @@
 # limitations under the License.
 
 
-FROM ubuntu:16.04
+from flask import Flask
+app = Flask(__name__)
 
-RUN apt-get update && apt-get install -y \
-    file \
-    poppler-utils \
-    bc \
-    ghostscript \
-    python \
-    python-flask \
-    gunicorn \
-    tzdata \
-&& rm -rf /var/lib/apt/lists/* \
-&& ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
-&& dpkg-reconfigure -f noninteractive tzdata
+import faas.api
 
-COPY faas /faas
-
-CMD ["gunicorn", \
-        "--config", "/faas/config.py", \
-        "faas:app"]

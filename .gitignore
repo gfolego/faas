@@ -1,2 +1,2 @@
 example/*.[pP][dD][fF]
-src/*.pyc
+faas/faas/*.pyc

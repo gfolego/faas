@@ -34,5 +34,5 @@ curl --output 'example/output.pdf' --form 'file=@example/input.pdf' 'http://loca
 In case the repository is updated, just copy the new code to the docker container,
 and [Gunicorn](http://gunicorn.org/) will reload the service automatically:
 ```bash
-docker cp src/. faas:/faas
+docker cp faas/. faas:/faas
 ```

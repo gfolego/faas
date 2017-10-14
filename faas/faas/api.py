@@ -20,34 +20,26 @@
 # limitations under the License.
 
 
-
-import os
-from flask import Flask, request, redirect, send_from_directory, after_this_request, render_template
-from werkzeug.utils import secure_filename
-
-from subprocess import call
-import tempfile
-import shutil
-
+from faas import app
 from process import pipeline, FMT_STR
 
-import sys
-import argparse
+import os
+from flask import request, redirect, send_from_directory, after_this_request, render_template
+from werkzeug.utils import secure_filename
+
+import tempfile
+import shutil
 
 from distutils.util import strtobool
 from datetime import datetime
 
 
 # Definitions
-HOST='0.0.0.0'
-PORT=5000
-
 TMPPATH = '/tmp'
 OUTFILE='faas.pdf'
-SCRIPT='faas.sh'
+
 ALLOWED_EXTENSIONS = set(['pdf'])
 
-app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 # 1 MB
 
 
@@ -109,35 +101,4 @@ def upload_file():
 @app.route('/', methods=['GET'])
 def web_interface():
     return render_template('index.html')
-
-
-
-
-def parse_args(argv):
-    parser = argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('-H', '--host', type=str, default=HOST,
-                            help='input server host')
-    parser.add_argument('-P', '--port', type=int, default=PORT,
-                            help='input server port')
-    parser.add_argument('-d', '--debug', action='store_true',
-                            help='activate debug mode')
-
-    args = parser.parse_args(args=argv)
-    return args
-
-
-# Main
-def main(argv):
-
-    # Parse arguments
-    args = parse_args(argv)
-    if args.debug: print(args)
-
-    app.run(host=args.host, port=args.port,
-            debug=args.debug)
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
 
