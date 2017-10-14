@@ -169,7 +169,10 @@
 			<p id='state2'>Selecionado arquivo <span id='fileName'></span> (<span id='fileSize'></span>)</p>
 			<input id="uploadInput" class='button' type="file" accept="application/pdf" name="file" onchange="updateSize();" style='display: none'>
 			<button type="button" id='uploadButton'>Escolher arquivo...</button>
-			<button id='process' type="submit">Processar</button>
+			<button id='process' type="submit">Processar</button><br><br>
+			<h2>Opções disponíveis</h2>
+			<input type="radio" name="dashed" value="False" checked>Pontos nas assinaturas dos dias úteis<br>
+			<input type="radio" name="dashed" value="True">Traços nas assinaturas dos dias não úteis<br>
 		</form>
 	</div>
 
