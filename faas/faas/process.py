@@ -27,7 +27,7 @@ FMT_STR='%H:%M'
 
 # PostScript definitions
 PS_GRAY_DARK = '.2 setgray'
-PS_GRAY_LIGHT = '.8 setgray'
+PS_GRAY_LIGHT = '.5 setgray'
 PS_START_CENTER_X = 68
 PS_END_CENTER_X = 186
 PS_SIGNATURE_X = 418
